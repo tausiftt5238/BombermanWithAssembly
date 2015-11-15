@@ -19,10 +19,7 @@ drawMap_loop:
 	
 	cmp dl,1h			;does dl have 1?
 	je drawMap_box		;yes, draw box
-	cmp dl,0Eh			;does dl have E?
-	je drawMap_enemy	;yes, draw enemy
-	cmp dl,0Bh			;does dl have B?
-	je drawMap_bomber	;yes, draw bomber
+	
 	jmp loop_back
 drawMap_box:
 	call draw_box		;draw box
