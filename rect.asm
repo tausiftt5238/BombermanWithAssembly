@@ -1,6 +1,6 @@
 extern rect_x1:word,rect_y1:word,rect_x2:word,rect_y2:word
 public draw_rect
-public draw_box,draw_enemy,draw_bomber
+public draw_box,draw_enemy,draw_bomber,draw_unbreak
 
 .model small
 .stack
@@ -62,34 +62,19 @@ draw_box proc
 	ret
 draw_box endp
 draw_enemy proc
-	push si
-	push bx
-	push ax
 	
-	mov ax,48d
-	mul si
-	mov rect_x1,ax
-	mov rect_x2,ax
-	add rect_x2,48d
-	
-	mov ax,48d
-	mul bx
-	mov rect_y1,ax
-	mov rect_y2,ax
-	add rect_y2,48d
-	
-	mov al,2h
-	call draw_rect
-	
-	pop ax
-	pop bx
-	pop si
 	ret
 draw_enemy endp
 draw_bomber proc
+	
+	ret
+draw_bomber endp
+
+draw_unbreak proc
 	push si
 	push bx
 	push ax
+	push cx
 	
 	mov ax,48d
 	mul si
@@ -97,18 +82,23 @@ draw_bomber proc
 	mov rect_x2,ax
 	add rect_x2,48d
 	
-	mov ax,48d
-	mul bx
+	mov ax,bx
+	mov cl,10
+	div cl		;quotient is in al
+	mov ah,0
+	mov cx,48d
+	mul cx
 	mov rect_y1,ax
 	mov rect_y2,ax
 	add rect_y2,48d
 	
-	mov al,1h
+	mov al,8h
 	call draw_rect
 	
+	pop cx
 	pop ax
 	pop bx
 	pop si
 	ret
-draw_bomber endp
+draw_unbreak endp
 	end

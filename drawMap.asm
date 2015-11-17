@@ -1,5 +1,6 @@
 extern map:byte
 extern draw_box:near, draw_bomber:near,draw_enemy:near
+extern draw_unbreak:near
 public drawMap
 
 .model small
@@ -19,16 +20,14 @@ drawMap_loop:
 	
 	cmp dl,1h			;does dl have 1?
 	je drawMap_box		;yes, draw box
-	
+	cmp dl,2h			;does dl have B?
+	je drawMap_unbreak	;yes, draw unbreakable wall
 	jmp loop_back
 drawMap_box:
 	call draw_box		;draw box
 	jmp loop_back		;loop back
-drawMap_enemy:
-	call draw_enemy		;draw enemy
-	jmp loop_back		;loop back
-drawMap_bomber:
-	call draw_bomber	;draw bomber
+drawMap_unbreak:
+	call draw_unbreak	;draw unbreakable wall
 	jmp loop_back		;loop back
 loop_back:
 	inc si				;increase si
