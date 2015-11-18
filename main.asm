@@ -104,6 +104,11 @@ main proc
 	mov ah,1h	;take an input from keyboard
 	int 21h
 	call reset_display
+	mov ah,2h
+	mov dx,bx
+	int 21h
+	mov ah,1h	;take an input from keyboard
+	int 21h
 	
 	mov ah,4ch
 	int 21h

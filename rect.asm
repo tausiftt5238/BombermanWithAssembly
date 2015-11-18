@@ -35,6 +35,7 @@ draw_box proc
 	push bx
 	push ax
 	push cx
+	push dx
 	
 	mov ax,24d
 	mul si
@@ -43,9 +44,10 @@ draw_box proc
 	add rect_x2,24d
 	
 	mov ax,bx
-	mov cl,20
-	div cl		;quotient is in al
-	mov ah,0
+	xor dx,dx
+	mov cx,20
+	div cx		;quotient is in al
+	;mov ah,0
 	mov cx,24d
 	mul cx
 	mov rect_y1,ax
@@ -55,6 +57,7 @@ draw_box proc
 	mov al,4h
 	call draw_rect
 	
+	pop dx
 	pop cx
 	pop ax
 	pop bx
@@ -75,6 +78,7 @@ draw_unbreak proc
 	push bx
 	push ax
 	push cx
+	push dx
 	
 	mov ax,24d
 	mul si
@@ -83,9 +87,10 @@ draw_unbreak proc
 	add rect_x2,24d
 	
 	mov ax,bx
-	mov cl,20
-	div cl		;quotient is in al
-	mov ah,0
+	xor dx,dx
+	mov cx,20
+	div cx		;quotient is in al
+	;mov ah,0
 	mov cx,24d
 	mul cx
 	mov rect_y1,ax
@@ -95,6 +100,7 @@ draw_unbreak proc
 	mov al,8h
 	call draw_rect
 	
+	pop dx
 	pop cx
 	pop ax
 	pop bx

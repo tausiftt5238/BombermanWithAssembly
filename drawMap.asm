@@ -8,7 +8,7 @@ public drawMap
 .code
 
 drawMap proc
-	push bx
+	;push bx
 	push si
 	push cx
 	push dx
@@ -35,13 +35,13 @@ loop_back:
 	jl drawMap_loop		;no, loop back
 	add bx,si			;yes, bx += si
 	mov si,0			;put 0 in si (start of row)
-	cmp bx,300d			;is bx > 20 * 20
+	cmp bx,400d			;is bx > 20 * 20
 	jl drawMap_loop		;no, loop back
 						;yes, end loop
 	pop dx
 	pop cx
 	pop si
-	pop bx
+	;pop bx
 	ret
 drawMap endp
 	end
