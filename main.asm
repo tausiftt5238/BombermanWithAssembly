@@ -96,6 +96,9 @@ main proc
 	call setup_display
 	call set_map
 	
+	mov bx,240
+	mov si,5
+	mov map[bx][si],1
 	call drawmap
 
 	mov ah,1h	;take an input from keyboard

@@ -31,11 +31,11 @@ drawMap_unbreak:
 	jmp loop_back		;loop back
 loop_back:
 	inc si				;increase si
-	cmp si,20			;is si > 10
+	cmp si,20			;is si > 20
 	jl drawMap_loop		;no, loop back
 	add bx,si			;yes, bx += si
 	mov si,0			;put 0 in si (start of row)
-	cmp bx,200d			;is bx > 10 * 11
+	cmp bx,300d			;is bx > 20 * 20
 	jl drawMap_loop		;no, loop back
 						;yes, end loop
 	pop dx
