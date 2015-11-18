@@ -28,8 +28,8 @@ scan_code	db 0
 key_flag db 0
 
 ;map of the level
-map db 2 dup(1), 5 dup(0), 8 dup(1), 10 dup(0), 11 dup(1), 4 dup(0), 2 dup(1), 5 dup(0), 9 dup(1), 9 dup(0), 9 dup(1), 12 dup(0), 10 dup(1), 5 dup(0) 
-;map db 100 dup(?)
+;map db 2 dup(1), 5 dup(0), 8 dup(1), 10 dup(0), 11 dup(1), 4 dup(0), 2 dup(1), 5 dup(0), 9 dup(1), 9 dup(0), 9 dup(1), 12 dup(0), 10 dup(1), 5 dup(0) 
+map db 400 dup(?)
 
 .code
 
@@ -51,38 +51,39 @@ reset_display proc
 	ret
 reset_display endp
 
+;set breakable and unbreakable boxes on the map
 set_map proc
-	mov cx,10d
-	mov bx,0
+	mov cx,20d		;20 x 20 array, so needs to iterate 20 times
+	mov bx,0		;upper border, for bx = 0 : 19
 set_map_loop1:
-	mov map[bx],2
-	inc bx
+	mov map[bx],2	;2 for unbreakable wall
+	inc bx			;bx ++
 	loop set_map_loop1
 	
-	mov cx,10d
-	mov bx,0
+	mov cx,20d		;20 iteration
+	mov bx,0		;left bound
 
 set_map_loop2:
-	mov map[bx],2
-	add bx,10d
+	mov map[bx],2	;2 for unbreakable wall
+	add bx,20d		;for bx = 0 : 190 : 20
 	loop set_map_loop2
 	
-	mov cx,10d
-	mov bx,0d
-	mov si,9d
+	mov cx,20d		;20 iteration
+	mov bx,0d		;right bound
+	mov si,19d		;
 	
 set_map_loop3:
 	mov map[bx][si],2
-	add bx,10d
+	add bx,20d		;for bx = 0 : 190 : 20
 	loop set_map_loop3
 	
-	mov cx,10d
-	mov bx,90d
+	mov cx,20d		;20 iteration
+	mov bx,380d		;lower bound
 	mov si,0d
 	
 set_map_loop4:
-	mov map[bx][si],2
-	inc si
+	mov map[bx][si],2	
+	inc si			; for si = 0 : 20
 	loop set_map_loop4
 
 	ret
