@@ -3,15 +3,14 @@ extern draw_box:near, draw_bomber:near,draw_enemy:near
 extern draw_unbreak:near
 public drawMap
 
+include mac
+
 .model small
 .stack
 .code
 
 drawMap proc
-	push bx
-	push si
-	push cx
-	push dx
+	save_reg
 	
 	mov bx,0
 	mov si,0
@@ -35,13 +34,10 @@ loop_back:
 	jl drawMap_loop		;no, loop back
 	add bx,si			;yes, bx += si
 	mov si,0			;put 0 in si (start of row)
-	cmp bx,300d			;is bx > 20 * 20
+	cmp bx,260d			;is bx > 20 * 20
 	jl drawMap_loop		;no, loop back
 						;yes, end loop
-	pop dx
-	pop cx
-	pop si
-	pop bx
+	load_reg
 	ret
 drawMap endp
 	end

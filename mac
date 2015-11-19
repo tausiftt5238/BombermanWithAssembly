@@ -1,0 +1,17 @@
+save_reg macro
+	push ax
+	push bx
+	push cx
+	push dx
+	push si
+	push di
+endm
+
+load_reg macro
+	pop di
+	pop si
+	pop dx
+	pop cx
+	pop bx
+	pop ax
+endm
