@@ -145,7 +145,7 @@ draw_unbreak proc
 	mov ax,bx
 	mov cl,20
 	div cl		;quotient is in al
-	mov ah,0
+	xor ah,ah
 	mov cx,15d
 	mul cx
 	mov rect_y1,ax

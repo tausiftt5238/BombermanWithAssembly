@@ -12,8 +12,8 @@ include mac
 drawMap proc
 	save_reg
 	
-	mov bx,0
-	mov si,0
+	xor bx,bx
+	xor si,si
 drawMap_loop:
 	mov dl, map[bx][si]	;store current location's content
 	
@@ -33,7 +33,7 @@ loop_back:
 	cmp si,20			;is si > 20
 	jl drawMap_loop		;no, loop back
 	add bx,si			;yes, bx += si
-	mov si,0			;put 0 in si (start of row)
+	xor si,si			;put 0 in si (start of row)
 	cmp bx,260d			;is bx > 20 * 13
 	jl drawMap_loop		;no, loop back
 						;yes, end loop
