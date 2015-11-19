@@ -24,10 +24,10 @@ rect_x2 dw ?
 rect_y2 dw ?
 
 ;parameters for bomberman 
-b_x1 dw ?
-b_y1 dw ?
-b_x2 dw ?
-b_y2 dw ?
+b_x1 dw 0
+b_y1 dw 0
+b_x2 dw 0
+b_y2 dw 0
 
 ;variables for keyboard
 up_arrow = 48h
@@ -85,15 +85,14 @@ main proc
 	mov ds,ax
 	
 	call setup_display
-	
-	;call drawmap
+	;call fileread_bombr
 	
 	mov b_x1,48
 	mov b_y1,48
 	mov b_x2,63
 	mov b_y2,63
 	call draw_bomber
-
+	
 	mov ah,1h	;take an input from keyboard
 	int 21h
 	call reset_display

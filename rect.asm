@@ -90,11 +90,11 @@ draw_bomber proc
 	mov ah,0ch
 	mov cx,b_x1
 	mov dx,b_y1
-	lea bx,bombr
+	lea si,bombr
 	
 draw_bomber_loop:
-	mov al,[bx]
-	inc bx
+	mov al,[si]
+	inc si
 	int 10h
 	inc cx
 	cmp cx,b_x2
@@ -105,7 +105,6 @@ draw_bomber_loop:
 	jl draw_bomber_loop
 	
 	load_reg
-	ret
 	ret
 draw_bomber endp
 
