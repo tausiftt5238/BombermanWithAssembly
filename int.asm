@@ -3,6 +3,8 @@ extern scan_code : byte, key_flag:byte
 public keyboard_int
 public setup_int
 
+include mac
+
 .model small
 .code
 
