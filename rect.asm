@@ -17,7 +17,7 @@ draw_rect proc
 	mov dx,rect_y1
 	
 draw_rect_loop:
-	int 10h
+	call draw_pixel
 	inc cx
 	cmp cx,rect_x2
 	jl draw_rect_loop
@@ -57,21 +57,21 @@ draw_sprite endp
 draw_box proc
 	save_reg
 	
-	mov ax,24d
+	mov ax,15d
 	mul si
 	mov rect_x1,ax
 	mov rect_x2,ax
-	add rect_x2,24d
+	add rect_x2,15d
 	
 	mov ax,bx
 	mov cl,20
 	div cl		;quotient is in al
 	mov ah,0
-	mov cx,24d
+	mov cx,15d
 	mul cx
 	mov rect_y1,ax
 	mov rect_y2,ax
-	add rect_y2,24d
+	add rect_y2,15d
 	
 	mov al,4h
 	call draw_rect
@@ -136,21 +136,21 @@ draw_pixel endp
 draw_unbreak proc
 	save_reg
 	
-	mov ax,24d
+	mov ax,15d
 	mul si
 	mov rect_x1,ax
 	mov rect_x2,ax
-	add rect_x2,24d
+	add rect_x2,15d
 	
 	mov ax,bx
 	mov cl,20
 	div cl		;quotient is in al
 	mov ah,0
-	mov cx,24d
+	mov cx,15d
 	mul cx
 	mov rect_y1,ax
 	mov rect_y2,ax
-	add rect_y2,24d
+	add rect_y2,15d
 	
 	mov al,8h
 	cmp bx,260

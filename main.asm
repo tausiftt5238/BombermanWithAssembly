@@ -100,10 +100,12 @@ main proc
 	call setup_display
 	;call fileread_bombr
 	
-	mov b_x1,48
-	mov b_y1,48
-	mov b_x2,63
-	mov b_y2,63
+	call drawMap
+	
+	mov b_x1,15
+	mov b_y1,15
+	mov b_x2,30
+	mov b_y2,30
 	call draw_bomber
 	
 	mov ah,1h	;take an input from keyboard
