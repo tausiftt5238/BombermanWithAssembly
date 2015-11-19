@@ -6,7 +6,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class imgToArray {
-	String path = "Bomber.png";
+	String path = "Untitled.png";
 	String outpath = "Bomber.txt";
 
 	public imgToArray() {
@@ -31,19 +31,25 @@ public class imgToArray {
 		int Y = image.getHeight();
 		for (int j = 0; j < Y; j++) {
 			try {
+			out.write("db ");
 				for (int i = 0; i < X; i++) {
+					if(i>0)
+						out.write(',');
 					int col = image.getRGB(i, j);
 					if (col == 0xffffffff)
-						out.write(0xf);
+						out.write("0fh");
 					else if (col == 0xFFED1C24)
-						out.write(0x4);
+						out.write("4");
 					else if (col == 0xFFFFF200)
-						out.write(0xe);
+						out.write("0eh");
 					else if (col == 0xFF3F48CC)
-						out.write(0x1);
+						out.write("1");
 					else if (col == 0xFF000000)
-						out.write(0x0);
+						out.write("0");
+					else if (col == 0xFF808080)
+						out.write("8");
 				}
+			out.write("\r\n");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

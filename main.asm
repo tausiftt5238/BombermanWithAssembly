@@ -1,11 +1,18 @@
 public rect_x1,rect_y1,rect_x2,rect_y2 	;for rect.asm
+public b_x1,b_y1,b_x2,b_y2 	;for rect.asm
 public map							   	;for drawMap.asm
 public scan_code						;for int.asm
 public key_flag							;for int.asm
+public bombr							;for rect.asm
+
 extern draw_rect:near				   	;from rect.asm
 extern drawMap:near					   	;from drawMap.asm
 extern keyboard_int:near			   	;from int.asm
 extern setup_int:near				   	;from int.asm
+extern draw_bomber:near					;from rect.asm
+extern draw_pixel:near					;from rect.asm
+
+include mac
 
 .model small
 .stack 100h
@@ -16,6 +23,12 @@ rect_x1 dw ?
 rect_y1 dw ?
 rect_x2 dw ?
 rect_y2 dw ?
+
+;parameters for bomberman 
+b_x1 dw 0
+b_y1 dw 0
+b_x2 dw 0
+b_y2 dw 0
 
 ;variables for keyboard
 up_arrow = 48h
@@ -28,8 +41,36 @@ scan_code	db 0
 key_flag db 0
 
 ;map of the level
-map db 2 dup(1), 5 dup(0), 8 dup(1), 10 dup(0), 11 dup(1), 4 dup(0), 2 dup(1), 5 dup(0), 9 dup(1), 9 dup(0), 9 dup(1), 12 dup(0), 10 dup(1), 5 dup(0) 
-;map db 100 dup(?)
+;map db 2 dup(1), 5 dup(0), 8 dup(1), 10 dup(0), 11 dup(1), 4 dup(0), 2 dup(1), 5 dup(0), 9 dup(1), 9 dup(0), 9 dup(1), 12 dup(0), 10 dup(1), 5 dup(0) 
+map db 8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8
+	db 8,0,0,4,0,4,4,0,0,8,4,0,0,0,4,0,0,0,0,8
+	db 8,0,8,4,8,0,8,0,8,0,4,8,0,8,4,8,0,8,0,8
+	db 8,4,4,4,0,4,0,4,0,0,8,0,0,0,4,4,4,0,0,8
+	db 8,0,8,0,8,0,8,4,8,0,0,8,0,8,0,8,4,8,0,8
+	db 8,4,4,4,4,4,0,0,0,8,0,0,4,4,0,0,4,0,0,8
+	db 8,0,8,4,8,0,8,0,8,0,0,8,4,8,4,8,4,8,4,8
+	db 8,0,0,4,0,0,0,4,4,4,8,0,4,0,0,0,0,0,0,8
+	db 8,0,8,0,8,0,8,0,8,0,0,8,0,8,0,8,0,8,4,8
+	db 8,4,4,4,4,4,0,0,0,8,0,4,0,0,4,4,4,0,0,8
+	db 8,0,8,4,8,4,8,0,8,4,4,8,0,8,4,8,0,8,0,8
+	db 8,0,0,0,0,0,0,0,0,4,8,0,0,0,4,0,0,0,0,8
+	db 8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8
+
+bombr	db 0,0,0,0,0,4,4,4,4,4,0,0,0,0,0
+		db 0,0,0,0,0,4,4,4,4,4,0,0,0,0,0
+		db 0,0,0,0fh,0fh,0fh,0fh,0fh,0fh,0fh,0fh,0fh,0,0,0
+		db 0,0,0,0fh,0eh,0,0eh,0eh,0eh,0,0eh,0fh,0,0,0
+		db 0,0,0,0fh,0eh,0,0eh,0eh,0eh,0,0eh,0fh,0,0,0
+		db 0,0,0,0fh,0eh,0,0eh,0eh,0eh,0,0eh,0fh,0,0,0
+		db 0,0,0,0fh,0fh,0fh,0fh,0fh,0fh,0fh,0fh,0fh,0,0,0
+		db 0,0,0fh,1,1,1,1,1,1,1,1,1,0fh,0,0
+		db 0,0,0fh,1,1,1,1,1,1,1,1,1,0fh,0,0
+		db 0,0,0fh,1,1,1,1,1,1,1,1,1,0fh,0,0
+		db 0,0,0fh,0,0,0,0eh,0eh,0eh,0,0,0,0fh,0,0
+		db 0,0,0,1,1,1,1,1,1,1,1,1,0,0,0
+		db 0,0,0,1,1,1,1,1,1,1,1,1,0,0,0
+		db 0,0,4,4,4,4,0,0,0,0,4,4,4,4,0
+		db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 .code
 
@@ -51,52 +92,22 @@ reset_display proc
 	ret
 reset_display endp
 
-set_map proc
-	mov cx,10d
-	mov bx,0
-set_map_loop1:
-	mov map[bx],2
-	inc bx
-	loop set_map_loop1
-	
-	mov cx,10d
-	mov bx,0
-
-set_map_loop2:
-	mov map[bx],2
-	add bx,10d
-	loop set_map_loop2
-	
-	mov cx,10d
-	mov bx,0d
-	mov si,9d
-	
-set_map_loop3:
-	mov map[bx][si],2
-	add bx,10d
-	loop set_map_loop3
-	
-	mov cx,10d
-	mov bx,90d
-	mov si,0d
-	
-set_map_loop4:
-	mov map[bx][si],2
-	inc si
-	loop set_map_loop4
-
-	ret
-set_map endp
 
 main proc
 	mov ax,@data
 	mov ds,ax
 	
 	call setup_display
-	call set_map
+	;call fileread_bombr
 	
-	call drawmap
-
+	call drawMap
+	
+	mov b_x1,15
+	mov b_y1,15
+	mov b_x2,30
+	mov b_y2,30
+	call draw_bomber
+	
 	mov ah,1h	;take an input from keyboard
 	int 21h
 	call reset_display
