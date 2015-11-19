@@ -2,7 +2,7 @@ extern rect_x1:word,rect_y1:word,rect_x2:word,rect_y2:word
 extern b_x1:word,b_y1:word,b_x2:word,b_y2:word
 extern bombr:byte
 public draw_rect
-public draw_box,draw_enemy,draw_bomber,draw_unbreak
+public draw_box,draw_enemy,draw_bomber,draw_unbreak,draw_pixel
 
 include mac
 
@@ -95,7 +95,7 @@ draw_bomber proc
 draw_bomber_loop:
 	mov al,[si]
 	inc si
-	int 10h
+	call draw_pixel
 	inc cx
 	cmp cx,b_x2
 	jl draw_bomber_loop
@@ -107,6 +107,31 @@ draw_bomber_loop:
 	load_reg
 	ret
 draw_bomber endp
+
+
+draw_pixel proc
+	push cx
+	push dx
+	
+	shl cx,1
+	shl dx,1
+	int 10h		;top-left pixel
+	
+	inc cx
+	int 10h		;top-right
+	
+	dec cx
+	inc dx
+	int 10h		;bottom-left
+	
+	inc cx
+	int 10h		;bottom-right
+	
+	pop dx
+	pop cx
+	ret
+draw_pixel endp
+	
 
 draw_unbreak proc
 	save_reg
