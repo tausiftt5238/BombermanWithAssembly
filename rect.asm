@@ -3,7 +3,7 @@ extern s_x1:word,s_y1:word,s_x2:word,s_y2:word,b_tx:word,b_ty:word
 extern temp_x:word,temp_y:word
 extern bombr:byte
 extern map:byte
-public draw_rect
+public draw_rect,clear_tile
 public draw_box,draw_enemy,draw_bomber,draw_unbreak,draw_pixel
 public move_bomber
 
@@ -214,4 +214,25 @@ move_bomber_done:
 	load_reg
 	ret
 move_bomber endp
+
+;send tileX in bx and tileY in cx
+clear_tile proc
+	save_reg
+	
+	call set_sprite_perimeter
+	mov ax,s_x1
+	mov rect_x1,ax
+	mov ax,s_x2
+	mov rect_x2,ax
+	mov ax,s_y1
+	mov rect_y1,ax
+	mov ax,s_y2
+	mov rect_y2,ax
+	
+	mov al,0
+	call draw_rect
+	
+	load_reg
+	ret
+clear_tile endp
 	end
