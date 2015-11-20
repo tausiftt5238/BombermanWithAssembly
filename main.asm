@@ -1,9 +1,11 @@
 public rect_x1,rect_y1,rect_x2,rect_y2 	;for rect.asm
-public b_x1,b_y1,b_x2,b_y2 	;for rect.asm
+public s_x1,s_y1,s_x2,s_y2,b_tx,b_ty 	;for rect.asm
 public map							   	;for drawMap.asm
 public scan_code						;for int.asm
 public key_flag							;for int.asm
 public bombr							;for rect.asm
+public bmb 								;for rect.asm
+public creep							;for rect.asm
 
 extern draw_rect:near				   	;from rect.asm
 extern drawMap:near					   	;from drawMap.asm
@@ -24,11 +26,19 @@ rect_y1 dw ?
 rect_x2 dw ?
 rect_y2 dw ?
 
-;parameters for bomberman 
-b_x1 dw 0
-b_y1 dw 0
-b_x2 dw 0
-b_y2 dw 0
+;parameters for bomberman
+b_tx dw 0
+b_ty dw 0
+
+;parameters for creep
+c_tx dw 0
+c_ty dw 0
+
+;parameters for drawing sprite
+s_x1 dw 0
+s_y1 dw 0
+s_x2 dw 0
+s_y2 dw 0
 
 ;variables for keyboard
 up_arrow = 48h
@@ -134,10 +144,8 @@ main proc
 	
 	call drawMap
 	
-	mov b_x1,15
-	mov b_y1,15
-	mov b_x2,30
-	mov b_y2,30
+	mov b_tx,1
+	mov b_ty,1
 	call draw_bomber
 	
 	mov ah,1h	;take an input from keyboard
