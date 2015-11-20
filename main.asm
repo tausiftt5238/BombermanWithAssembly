@@ -1,10 +1,12 @@
 public rect_x1,rect_y1,rect_x2,rect_y2 	;for rect.asm
-public b_x1,b_y1,b_x2,b_y2 				;for rect.asm
+public s_x1,s_y1,s_x2,s_y2,b_tx,b_ty 	;for rect.asm
 public map							   	;for drawMap.asm
 public scan_code						;for keyint.asm
 public key_flag							;for keyint.asm
 public bombr							;for rect.asm
 public timer_flag						;for timer.asm
+public bmb 								;for rect.asm
+public creep							;for rect.asm
 
 extern draw_rect:near				   	;from rect.asm
 extern drawMap:near					   	;from drawMap.asm
@@ -20,17 +22,35 @@ include mac
 .stack 100h
 .data
 
+;variables for interrupts
+
+new_timer_vec dw ? , ?
+old_timer_vec dw ? , ?
+new_key_vec	dw ? , ?
+old_key_vec dw ? , ?
+scan_code	db 0
+key_flag db 0
+timer_flag db 0
+
 ;parameters for drawing rectangle
 rect_x1 dw ?
 rect_y1 dw ?
 rect_x2 dw ?
 rect_y2 dw ?
 
-;parameters for bomberman 
-b_x1 dw 0
-b_y1 dw 0
-b_x2 dw 0
-b_y2 dw 0
+;parameters for bomberman
+b_tx dw 0
+b_ty dw 0
+
+;parameters for creep
+c_tx dw 0
+c_ty dw 0
+
+;parameters for drawing sprite
+s_x1 dw 0
+s_y1 dw 0
+s_x2 dw 0
+s_y2 dw 0
 
 ;variables for keyboard
 up_arrow = 48h
@@ -39,14 +59,7 @@ left_arrow = 4Bh
 right_arrow = 4Dh
 spc_button = 39h
 
-;variables for interrupts
-timer_flag db 0
-new_timer_vec dw ? , ?
-old_timer_vec dw ? , ?
-new_key_vec	dw ? , ?
-old_key_vec dw ? , ?
-scan_code	db 0
-key_flag db 0
+
 
 ;map of the level
 ;map db 2 dup(1), 5 dup(0), 8 dup(1), 10 dup(0), 11 dup(1), 4 dup(0), 2 dup(1), 5 dup(0), 9 dup(1), 9 dup(0), 9 dup(1), 12 dup(0), 10 dup(1), 5 dup(0) 
@@ -79,6 +92,38 @@ bombr	db 0,0,0,0,0,4,4,4,4,4,0,0,0,0,0
 		db 0,0,0,1,1,1,1,1,1,1,1,1,0,0,0
 		db 0,0,4,4,4,4,0,0,0,0,4,4,4,4,0
 		db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+		
+bmb		db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+		db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+		db 0,0,0,0,0,5,5,5,5,5,0,0,0,0,0
+		db 0,0,0,0,5,5,5,5,5,5,5,0,0,0,0
+		db 0,0,0,5,5,5,5,5,5,5,5,5,0,0,0
+		db 0,0,5,5,5,5,5,5,5,5,5,5,5,0,0
+		db 0,0,5,5,5,5,5,5,5,5,5,5,5,0,0
+		db 0,0,5,5,5,5,5,5,5,5,5,5,5,0,0
+		db 0,0,5,5,5,5,5,5,5,5,5,5,5,0,0
+		db 0,0,0,5,5,5,5,5,5,5,5,5,0,0,0
+		db 0,0,0,0,5,5,5,5,5,5,5,0,0,0,0
+		db 0,0,0,0,0,5,5,5,5,5,0,0,0,0,0
+		db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+		db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+		db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+		
+creep	db 0,0,0,0,0eh,0eh,2,2,2,2,2,2,0,0,0
+		db 0,0,0,0,0eh,0eh,2,2,2,2,2,2,0,0,0
+		db 0,0,0,0,2,0,0,2,2,0,0,2,0,0,0
+		db 0,0,0,0,2,2,2,2,2,2,0eh,0eh,0,0,0
+		db 0,0,0,0,2,2,2,0,0,2,0eh,0eh,0,0,0
+		db 0,0,0,0,2,2,0,2,2,0,2,2,0,0,0
+		db 0,0,0,0,0,0,2,2,2,2,0,0,0,0,0
+		db 0,0,0,2,2,2,2,0eh,0eh,2,2,2,2,0,0
+		db 0,0eh,0eh,0eh,2,2,2,0eh,0eh,2,2,2,2,2,2
+		db 0,0eh,0eh,0eh,2,0,2,0eh,0eh,2,0,2,2,2,2
+		db 0,0,0,0,0,0,2,0eh,0eh,2,0,0,0,0,0
+		db 0,0,0,0,0,0,2,2,2,2,0,0,0,0,0
+		db 0,0,0,2,2,2,2,0,0,2,2,2,2,0,0
+		db 0,0,0,2,0eh,0eh,2,0,0,2,0eh,0eh,2,0,0
+		db 0,0,0,2,2,2,2,0,0,2,2,2,2,0,0
 
 .code
 
@@ -107,6 +152,10 @@ main proc
 	
 	call setup_display
 	
+	mov b_tx,1
+	mov b_ty,1
+	call draw_bomber
+	
 	;set up timer interrupt vector
 	mov new_timer_vec, offset timer_tick	;offset
 	mov new_timer_vec+2,cs					;segment
@@ -125,16 +174,13 @@ main proc
 	
 	;call fileread_bombr
 	
-	;call drawMap
 	
-	mov b_x1,15
-	mov b_y1,15
-	mov b_x2,30
-	mov b_y2,30
-	call draw_bomber
 	
-	mov ah,1h	;take an input from keyboard
-	int 21h
+	
+	call drawMap
+	
+	;mov ah,1h	;take an input from keyboard
+	;int 21h
 	call reset_display
 	
 	;reset timer interrupt vector
