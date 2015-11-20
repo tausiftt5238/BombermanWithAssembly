@@ -1,8 +1,11 @@
 extern rect_x1:word,rect_y1:word,rect_x2:word,rect_y2:word
 extern s_x1:word,s_y1:word,s_x2:word,s_y2:word,b_tx:word,b_ty:word
+extern temp_x:word,temp_y:word
 extern bombr:byte
+extern map:byte
 public draw_rect
 public draw_box,draw_enemy,draw_bomber,draw_unbreak,draw_pixel
+public move_bomber
 
 include mac
 
@@ -175,4 +178,40 @@ draw_unbreak proc
 	load_reg
 	ret
 draw_unbreak endp
+
+move_bomber proc
+	;input : si and bx, bx defines row while si defines column
+	save_reg
+	
+	mov temp_x, si		;store si
+	mov temp_y, bx		;store bx
+	mov ax,20d			;multiply b_ty for coordinate in MAP
+	mul b_ty			; ax = b_ty * 20
+	add bx,ax			; bx += ax
+	add si,b_tx				
+	cmp map[bx][si],0	; checking if there's 0 (moveable tile) in the map
+	jne move_bomber_done	;if not, bomberman can't move
+	cmp temp_x,0		
+	jl move_bomber_up	; if temp_x is negative, go up
+	jg move_bomber_down	;if temp_x is positive, go down
+	cmp temp_y,0
+	jl	move_bomber_left	;if temp_y is negative go left
+	jg move_bomber_right	;if temp_y is positive go right
+	jmp move_bomber_done
+move_bomber_up:
+	dec b_tx
+	jmp move_bomber_done
+move_bomber_down:
+	inc b_tx
+	jmp move_bomber_done
+move_bomber_left:
+	dec b_ty
+	jmp move_bomber_done
+move_bomber_right:
+	inc b_ty
+	jmp move_bomber_done	
+move_bomber_done:	
+	load_reg
+	ret
+move_bomber endp
 	end

@@ -48,10 +48,6 @@ public class imgToArray {
 						out.write("0");
 					else if (col == 0xFF808080)
 						out.write("8");
-					else if (col == 0xFFA349A4)
-						out.write("5");
-					else if	(col == 0xFF22B14C)
-						out.write("2");
 				}
 			out.write("\r\n");
 			} catch (IOException e) {
