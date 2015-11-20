@@ -17,6 +17,7 @@ extern draw_bomber:near					;from rect.asm
 extern draw_pixel:near					;from rect.asm
 extern timer_tick:near					;from timer.asm
 extern move_bomber:near					;from rect.asm
+extern clear_tile:near					;from rect.asm
 
 include mac
 
@@ -195,6 +196,9 @@ main proc
 test_key:
 	cmp key_flag,1		;check key flag
 	jne test_timer		;not set, go ceck timer flag
+	mov bx,b_tx
+	mov cx,b_ty
+	call clear_tile
 	mov key_flag,0		;flag set, clear it and check scan code
 	cmp scan_code,esc_key	;esc key?
 	jne tk_up			;no, check arrow keys
