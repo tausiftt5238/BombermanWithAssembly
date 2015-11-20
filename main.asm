@@ -203,7 +203,7 @@ test_key:
 tk_up:
 	cmp scan_code, up_arrow		;up arrow?
 	jne tk_down					;no, check down arrow
-	mov bx,-10
+	mov bx,-20
 	mov si,0
 	call move_bomber
 	jmp test_timer				;go check timer
@@ -211,7 +211,7 @@ tk_up:
 tk_down:
 	cmp scan_code, down_arrow		;down arrow?
 	jne tk_left					;no, check left arrow
-	mov bx,10
+	mov bx,20
 	mov si,0
 	call move_bomber
 	jmp test_timer				;go check timer

@@ -183,12 +183,12 @@ move_bomber proc
 	;input : si and bx, bx defines row while si defines column
 	save_reg
 	
-	mov temp_x, si
-	mov temp_y, bx
-	mov ax,10d
-	mul b_ty
-	add bx,ax
-	add si,b_tx
+	mov temp_x, si		;store si
+	mov temp_y, bx		;store bx
+	mov ax,20d			;multiply b_ty for coordinate in MAP
+	mul b_ty			; ax = b_ty * 20
+	add bx,ax			; bx += ax
+	add si,b_tx			
 	cmp map[bx][si],0
 	jne move_bomber_done
 	cmp temp_x,0
