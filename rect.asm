@@ -188,15 +188,15 @@ move_bomber proc
 	mov ax,20d			;multiply b_ty for coordinate in MAP
 	mul b_ty			; ax = b_ty * 20
 	add bx,ax			; bx += ax
-	add si,b_tx			
-	cmp map[bx][si],0
-	jne move_bomber_done
-	cmp temp_x,0
-	jl move_bomber_up
-	jg move_bomber_down
+	add si,b_tx				
+	cmp map[bx][si],0	; checking if there's 0 (moveable tile) in the map
+	jne move_bomber_done	;if not, bomberman can't move
+	cmp temp_x,0		
+	jl move_bomber_up	; if temp_x is negative, go up
+	jg move_bomber_down	;if temp_x is positive, go down
 	cmp temp_y,0
-	jl	move_bomber_left
-	jg move_bomber_right
+	jl	move_bomber_left	;if temp_y is negative go left
+	jg move_bomber_right	;if temp_y is positive go right
 	jmp move_bomber_done
 move_bomber_up:
 	dec b_tx
