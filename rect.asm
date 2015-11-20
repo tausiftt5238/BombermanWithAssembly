@@ -153,10 +153,6 @@ draw_unbreak proc
 	add rect_y2,15d
 	
 	mov al,8h
-	cmp bx,260
-	jl draw_rect_skip
-	mov al,2h
-draw_rect_skip:
 	call draw_rect
 	
 	load_reg

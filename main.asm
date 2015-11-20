@@ -1,16 +1,18 @@
 public rect_x1,rect_y1,rect_x2,rect_y2 	;for rect.asm
-public b_x1,b_y1,b_x2,b_y2 	;for rect.asm
+public b_x1,b_y1,b_x2,b_y2 				;for rect.asm
 public map							   	;for drawMap.asm
-public scan_code						;for int.asm
-public key_flag							;for int.asm
+public scan_code						;for keyint.asm
+public key_flag							;for keyint.asm
 public bombr							;for rect.asm
+public timer_flag						;for timer.asm
 
 extern draw_rect:near				   	;from rect.asm
 extern drawMap:near					   	;from drawMap.asm
-extern keyboard_int:near			   	;from int.asm
-extern setup_int:near				   	;from int.asm
+extern keyboard_int:near			   	;from keyint.asm
+extern setup_int:near				   	;from setint.asm
 extern draw_bomber:near					;from rect.asm
 extern draw_pixel:near					;from rect.asm
+extern timer_tick:near					;from timer.asm
 
 include mac
 
@@ -37,6 +39,12 @@ left_arrow = 4Bh
 right_arrow = 4Dh
 spc_button = 39h
 
+;variables for interrupts
+timer_flag db 0
+new_timer_vec dw ? , ?
+old_timer_vec dw ? , ?
+new_key_vec	dw ? , ?
+old_key_vec dw ? , ?
 scan_code	db 0
 key_flag db 0
 
@@ -98,9 +106,26 @@ main proc
 	mov ds,ax
 	
 	call setup_display
+	
+	;set up timer interrupt vector
+	mov new_timer_vec, offset timer_tick	;offset
+	mov new_timer_vec+2,cs					;segment
+	mov al,1ch								;interrupt number
+	lea di, old_timer_vec
+	lea si, new_timer_vec
+	call setup_int
+	
+	;set up keyboard interrupt vector
+	mov new_key_vec, offset keyboard_int		;offset
+	mov new_key_vec+2, cs						;segment
+	mov al,9h									;interrupt number
+	lea di, old_key_vec
+	lea si, new_key_vec
+	;call setup_int
+	
 	;call fileread_bombr
 	
-	call drawMap
+	;call drawMap
 	
 	mov b_x1,15
 	mov b_y1,15
@@ -111,6 +136,19 @@ main proc
 	mov ah,1h	;take an input from keyboard
 	int 21h
 	call reset_display
+	
+	;reset timer interrupt vector
+done:
+	lea di,new_timer_vec
+	lea si, old_timer_vec
+	mov al,1ch
+	call setup_int
+	
+	;reset keyboard interrupt vector
+	lea di, new_key_vec
+	lea si,old_key_vec
+	mov al,9h
+	;call setup_int
 	
 	mov ah,4ch
 	int 21h
