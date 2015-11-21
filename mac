@@ -15,3 +15,25 @@ load_reg macro
 	pop bx
 	pop ax
 endm
+
+printw macro n
+	save_reg
+	mov ax,n
+	local stacking,printing
+	mov bx,10d
+	xor cx,cx
+stacking:
+	xor dx,dx
+	div bx
+	inc cx
+	or dx,30h
+	push dx
+	or ax,ax
+	jne stacking
+printing:
+	pop dx
+	mov ah,2h
+	int 21h
+	loop printing
+	load_reg
+endm
