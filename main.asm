@@ -248,7 +248,10 @@ tk_right:
 tk_space:
 	cmp scan_code, spc_button		;space button?
 	jne test_timer					;no , check timer
+	cmp bomb_life,0					;is a bomb active?
+	jg tk_space_skip				;yes? skip
 	call set_bomb
+tk_space_skip:
 	jmp test_timer				;go check timer	
 	
 ;check timer flag
@@ -263,19 +266,19 @@ delay:
 	cmp timer_flag,1			;timer ticked?
 	jne delay					;no, keep checking
 	mov timer_flag,0
-	call draw_bomber
+	call draw_bomber			
 	
-	loop delay
+	loop delay					;delay it for 500ms
 	pop cx
-	cmp bomb_life,0
-	je burst_bomb
-	jl delay_skip
-	dec bomb_life
-	call draw_bmb
-	jmp delay_skip
-burst_bomb:
-	dec bomb_life
-	call clear_bomb
+	cmp bomb_life,0				;check if explosion is to happen
+	je burst_bomb				;yes? explosion!!!
+	jl delay_skip				; < 0 ? skip
+	dec bomb_life				;decrease bomb_life
+	call draw_bmb				;render bomb
+	jmp delay_skip				;done rendering
+burst_bomb:						;after explosion, dec bomb_life to -1
+	dec bomb_life				;decrease bomb_life (to make it -1)
+	call clear_bomb				;bomb is done, clear it.
 delay_skip:
 	
 	jmp test_key

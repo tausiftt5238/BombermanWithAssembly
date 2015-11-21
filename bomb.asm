@@ -2,6 +2,7 @@ extern bomb_life:byte, bomb_x:word, bomb_y:word
 extern b_tx:word ,b_ty:word
 extern map:byte
 extern clear_tile:near
+extern draw_bmb:near
 
 public set_bomb
 public clear_bomb
@@ -28,6 +29,8 @@ set_bomb proc
 	mov si,bomb_x
 	
 	mov map[bx][si],5
+	
+	call draw_bmb
 	
 	load_reg
 	ret
