@@ -1,11 +1,14 @@
 extern rect_x1:word,rect_y1:word,rect_x2:word,rect_y2:word
 extern s_x1:word,s_y1:word,s_x2:word,s_y2:word,b_tx:word,b_ty:word
+extern bomb_x:word, bomb_y:word
 extern temp_x:word,temp_y:word
 extern bombr:byte
 extern map:byte
+extern bmb:byte
 public draw_rect,clear_tile
 public draw_box,draw_enemy,draw_bomber,draw_unbreak,draw_pixel
 public move_bomber
+public draw_bmb
 
 include mac
 
@@ -166,6 +169,21 @@ draw_bomber proc
 	ret
 draw_bomber endp
 
+draw_bmb proc
+	save_reg
+	
+	mov bx,bomb_x
+	mov cx,bomb_y
+	
+	call set_sprite_perimeter
+	
+	lea si,bmb
+	
+	call draw_sprite
+	
+	load_reg
+	ret
+draw_bmb endp
 
 ;Draws gray unbreakable boxes
 draw_unbreak proc
@@ -235,4 +253,5 @@ clear_tile proc
 	load_reg
 	ret
 clear_tile endp
+
 	end

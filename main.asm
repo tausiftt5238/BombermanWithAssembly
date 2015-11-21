@@ -1,6 +1,6 @@
 public rect_x1,rect_y1,rect_x2,rect_y2 	;for rect.asm
-public s_x1,s_y1,s_x2,s_y2,b_tx,b_ty 	;for rect.asm
-public map							   	;for drawMap.asm,rect.asm
+public s_x1,s_y1,s_x2,s_y2,b_tx,b_ty 	;for rect.asm,bomb.asm
+public map							   	;for drawMap.asm,rect.asm,bomb.asm
 public scan_code						;for keyint.asm
 public key_flag							;for keyint.asm
 public bombr							;for rect.asm
@@ -8,6 +8,7 @@ public timer_flag						;for timer.asm
 public bmb 								;for rect.asm
 public creep							;for rect.asm
 public temp_x,temp_y					;for rect.asm
+public bomb_life, bomb_x, bomb_y		;for bomb.asm
 
 extern draw_rect:near				   	;from rect.asm
 extern drawMap:near					   	;from drawMap.asm
@@ -18,6 +19,9 @@ extern draw_pixel:near					;from rect.asm
 extern timer_tick:near					;from timer.asm
 extern move_bomber:near					;from rect.asm
 extern clear_tile:near					;from rect.asm
+extern set_bomb:near					;from bomb.asm
+extern clear_bomb:near					;from bomb.asm
+extern draw_bmb:near					;from rect.asm
 
 include mac
 
@@ -64,6 +68,11 @@ left_arrow = 4Bh
 right_arrow = 4Dh
 spc_button = 39h
 esc_key	= 1
+
+;bomb variables
+bomb_life db -1
+bomb_x	dw -1
+bomb_y 	dw -1
 
 
 
@@ -189,7 +198,7 @@ main proc
 	call setup_int
 	
 	mov b_tx,1
-	mov b_ty,3
+	mov b_ty,2
 	call draw_bomber
 	call drawMap
 	
@@ -230,10 +239,17 @@ tk_left:
 	
 tk_right:
 	cmp scan_code, right_arrow		;right arrow?
-	jne test_timer					;no , check timer
+	jne tk_space					;no , check space bar
 	mov bx,0
 	mov si,1
 	call move_bomber
+	jmp test_timer				;go check timer
+	
+tk_space:
+	cmp scan_code, spc_button		;space button?
+	jne test_timer					;no , check timer
+	call set_bomb
+	jmp test_timer				;go check timer	
 	
 ;check timer flag
 test_timer:
@@ -248,8 +264,20 @@ delay:
 	jne delay					;no, keep checking
 	mov timer_flag,0
 	call draw_bomber
+	
 	loop delay
 	pop cx
+	cmp bomb_life,0
+	je burst_bomb
+	jl delay_skip
+	dec bomb_life
+	call draw_bmb
+	jmp delay_skip
+burst_bomb:
+	dec bomb_life
+	call clear_bomb
+delay_skip:
+	
 	jmp test_key
 		
 		
@@ -266,8 +294,6 @@ done:
 	mov al,9h
 	call setup_int
 	
-	mov ah,1h	;take an input from keyboard
-	int 21h
 	call reset_display
 	
 	mov ah,4ch
