@@ -237,15 +237,19 @@ tk_right:
 	
 ;check timer flag
 test_timer:
-	cmp timer_flag,1 			;flag set?
-	jne test_key				;no, check key flag
-	mov timer_flag,0			;yes,clear it
+	;cmp timer_flag,1 			;flag set?
+	;jne test_key				;no, check key flag
+	;mov timer_flag,0			;yes,clear it
 	
+	push cx
+	mov cx,9
 delay:
 	cmp timer_flag,1			;timer ticked?
 	jne delay					;no, keep checking
 	mov timer_flag,0
 	call draw_bomber
+	loop delay
+	pop cx
 	jmp test_key
 		
 		
