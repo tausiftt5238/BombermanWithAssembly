@@ -46,8 +46,14 @@ rng endp
 ;c_dir: 0=up,1=right,2=down,3=left
 update_creep proc
 	save_reg
+	xor cx,cx
 	
+creep_loop:
+	mov c_index,cx
 	call move_creep
+	inc cx
+	cmp cx,3
+	jne creep_loop
 	
 	load_reg
 	ret
@@ -56,7 +62,9 @@ update_creep endp
 
 move_creep proc
 	save_reg
-	cmp c_alive,0
+	
+	mov di,c_index
+	cmp c_alive[di],0
 	je move_creep_done
 	call rng
 	
@@ -91,13 +99,13 @@ creep_dir_set:
 	mov temp_x, si
 	mov temp_y, bx
 	mov ax,20d
-	mul c_ty
+	mul c_ty[di]
 	add bx,ax
-	add si,c_tx
+	add si,c_tx[di]
 	cmp map[bx][si],0
 	jne move_creep_done
-	mov bx,c_tx
-	mov cx,c_ty
+	mov bx,c_tx[di]
+	mov cx,c_ty[di]
 	cmp temp_x,0
 	jl move_creep_up
 	jg move_creep_down
@@ -107,19 +115,19 @@ creep_dir_set:
 	jmp move_creep_done
 	
 move_creep_up:
-	dec c_tx
+	dec c_tx[di]
 	jmp render_creep
 
 move_creep_right:
-	inc c_ty
+	inc c_ty[di]
 	jmp render_creep
 
 move_creep_down:
-	inc c_tx
+	inc c_tx[di]
 	jmp render_creep
 
 move_creep_left:
-	dec c_ty
+	dec c_ty[di]
 	jmp render_creep
 
 render_creep:

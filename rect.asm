@@ -211,8 +211,8 @@ draw_explode endp
 draw_creep proc
 	save_reg
 	
-	mov bx,c_tx
-	mov cx,c_ty
+	mov bx,c_tx[di]
+	mov cx,c_ty[di]
 	
 	call set_sprite_perimeter
 	
