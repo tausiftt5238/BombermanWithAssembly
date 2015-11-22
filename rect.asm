@@ -6,12 +6,15 @@ extern bombr:byte
 extern map:byte
 extern bmb:byte
 extern fire:byte
+extern creep:byte
 extern fire_x:word, fire_y:word
+extern c_tx:word, c_ty:word
 public draw_rect,clear_tile
 public draw_box,draw_enemy,draw_bomber,draw_unbreak,draw_pixel
 public move_bomber
 public draw_bmb
 public draw_explode
+public draw_creep
 
 include mac
 
@@ -203,6 +206,23 @@ draw_explode proc
 	load_reg
 	ret
 draw_explode endp
+
+;draws the creep indexed by di
+draw_creep proc
+	save_reg
+	
+	mov bx,c_tx
+	mov cx,c_ty
+	
+	call set_sprite_perimeter
+	
+	lea si,creep
+	
+	call draw_sprite
+	
+	load_reg
+	ret
+draw_creep endp
 
 ;Draws gray unbreakable boxes
 draw_unbreak proc
