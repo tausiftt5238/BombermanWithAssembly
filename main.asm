@@ -9,6 +9,8 @@ public bmb 								;for rect.asm
 public creep							;for rect.asm
 public temp_x,temp_y					;for rect.asm
 public bomb_life, bomb_x, bomb_y		;for bomb.asm
+public fire								;for rect.asm
+public fire_x, fire_y					;for rect.asm
 
 extern draw_rect:near				   	;from rect.asm
 extern drawMap:near					   	;from drawMap.asm
@@ -22,6 +24,7 @@ extern clear_tile:near					;from rect.asm
 extern set_bomb:near					;from bomb.asm
 extern clear_bomb:near					;from bomb.asm
 extern draw_bmb:near					;from rect.asm
+extern bomb_blast:near					;from bomb.asm
 
 include mac
 
@@ -61,6 +64,10 @@ s_y1 dw 0
 s_x2 dw 0
 s_y2 dw 0
 
+;parameter for explosion
+fire_x dw 0
+fire_y dw 0
+
 ;variables for keyboard
 up_arrow = 48h
 down_arrow = 50h
@@ -78,33 +85,33 @@ bomb_y 	dw -1
 
 ;map of the level
 ;map db 2 dup(1), 5 dup(0), 8 dup(1), 10 dup(0), 11 dup(1), 4 dup(0), 2 dup(1), 5 dup(0), 9 dup(1), 9 dup(0), 9 dup(1), 12 dup(0), 10 dup(1), 5 dup(0) 
-;map db 8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8
-;	db 8,0,0,4,0,4,4,0,0,8,4,0,0,0,4,0,0,0,0,8
-;	db 8,0,8,4,8,0,8,0,8,0,4,8,0,8,4,8,0,8,0,8
-;	db 8,4,4,4,0,4,0,4,0,0,8,0,0,0,4,4,4,0,0,8
-;	db 8,0,8,0,8,0,8,4,8,0,0,8,0,8,0,8,4,8,0,8
-;	db 8,4,4,4,4,4,0,0,0,8,0,0,4,4,0,0,4,0,0,8
-;	db 8,0,8,4,8,0,8,0,8,0,0,8,4,8,4,8,4,8,4,8
-;	db 8,0,0,4,0,0,0,4,4,4,8,0,4,0,0,0,0,0,0,8
-;	db 8,0,8,0,8,0,8,0,8,0,0,8,0,8,0,8,0,8,4,8
-;	db 8,4,4,4,4,4,0,0,0,8,0,4,0,0,4,4,4,0,0,8
-;	db 8,0,8,4,8,4,8,0,8,4,4,8,0,8,4,8,0,8,0,8
-;	db 8,0,0,0,0,0,0,0,0,4,8,0,0,0,4,0,0,0,0,8
-;	db 8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8
+map db 8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8
+	db 8,0,0,4,0,4,4,0,0,8,4,0,0,0,4,0,0,0,0,8
+	db 8,0,8,4,8,0,8,0,8,0,4,8,0,8,4,8,0,8,0,8
+	db 8,4,4,4,0,4,0,4,0,0,8,0,0,0,4,4,4,0,0,8
+	db 8,0,8,0,8,0,8,4,8,0,0,8,0,8,0,8,4,8,0,8
+	db 8,4,4,4,4,4,0,0,0,8,0,0,4,4,0,0,4,0,0,8
+	db 8,0,8,4,8,0,8,0,8,0,0,8,4,8,4,8,4,8,4,8
+	db 8,0,0,4,0,0,0,4,4,4,8,0,4,0,0,0,0,0,0,8
+	db 8,0,8,0,8,0,8,0,8,0,0,8,0,8,0,8,0,8,4,8
+	db 8,4,4,4,4,4,0,0,0,8,0,4,0,0,4,4,4,0,0,8
+	db 8,0,8,4,8,4,8,0,8,4,4,8,0,8,4,8,0,8,0,8
+	db 8,0,0,0,0,0,0,0,0,4,8,0,0,0,4,0,0,0,0,8
+	db 8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8
 
-map db 20 dup(8)
-	db 8 , 18 dup (0) , 8
-	db 8 , 18 dup (0) , 8
-	db 8 , 18 dup (0) , 8
-	db 8 , 18 dup (0) , 8
-	db 8 , 18 dup (0) , 8
-	db 8 , 18 dup (0) , 8
-	db 8 , 18 dup (0) , 8
-	db 8 , 18 dup (0) , 8
-	db 8 , 18 dup (0) , 8
-	db 8 , 18 dup (0) , 8
-	db 8 , 18 dup (0) , 8
-	db 20 dup(8)
+;map db 20 dup(8)
+;	db 8 , 18 dup (0) , 8
+;	db 8 , 18 dup (0) , 8
+;	db 8 , 18 dup (0) , 8
+;	db 8 , 18 dup (0) , 8
+;	db 8 , 18 dup (0) , 8
+;	db 8 , 18 dup (0) , 8
+;	db 8 , 18 dup (0) , 8
+;	db 8 , 18 dup (0) , 8
+;	db 8 , 18 dup (0) , 8
+;	db 8 , 18 dup (0) , 8
+;	db 8 , 18 dup (0) , 8
+;	db 20 dup(8)
 
 bombr	db 0,0,0,0,0,4,4,4,4,4,0,0,0,0,0
 		db 0,0,0,0,0,4,4,4,4,4,0,0,0,0,0
@@ -153,6 +160,23 @@ creep	db 0,0,0,0,0eh,0eh,2,2,2,2,2,2,0,0,0
 		db 0,0,0,2,2,2,2,0,0,2,2,2,2,0,0
 		db 0,0,0,2,0eh,0eh,2,0,0,2,0eh,0eh,2,0,0
 		db 0,0,0,2,2,2,2,0,0,2,2,2,2,0,0
+		
+fire 	db 4,4,4,0eh,4,0eh,0eh,0eh,0eh,4,0eh,4,0eh,0eh,4
+		db 4,0eh,4,4,0eh,4,4,0eh,4,4,4,0eh,0eh,4,0eh
+		db 0eh,4,4,0eh,0eh,0eh,4,4,0eh,0eh,0eh,4,4,0eh,4
+		db 4,4,4,0eh,0eh,4,0eh,0eh,0eh,0eh,0eh,4,0eh,4,0eh
+		db 4,0eh,4,4,0eh,0eh,4,0eh,0eh,4,4,4,0eh,0eh,0eh
+		db 4,4,4,4,4,4,4,4,4,4,0eh,0eh,4,4,0eh
+		db 0eh,0eh,0eh,4,4,0eh,0eh,4,4,0eh,4,4,4,4,4
+		db 0eh,4,4,0eh,4,4,4,4,0eh,0eh,0eh,0eh,4,4,4
+		db 4,4,4,0eh,0eh,4,4,4,4,4,0eh,0eh,4,0eh,4
+		db 0eh,4,0eh,4,4,0eh,4,4,0eh,0eh,4,4,4,4,4
+		db 4,4,4,4,0eh,0eh,4,4,0eh,4,4,0eh,0eh,4,0eh
+		db 0eh,4,0eh,0eh,4,4,4,4,4,4,4,4,4,0eh,0eh
+		db 4,0eh,0eh,0eh,4,4,4,0eh,0eh,0eh,0eh,0eh,0eh,0eh,0eh
+		db 4,0eh,4,4,4,4,4,0eh,4,4,4,0eh,4,4,4
+		db 0eh,0eh,4,4,4,0eh,0eh,0eh,0eh,4,4,0eh,4,0eh,4
+
 
 .code
 
@@ -208,6 +232,10 @@ test_key:
 	mov bx,b_tx
 	mov cx,b_ty
 	call clear_tile
+	cmp bomb_life,0
+	jle test_key_skip
+	call draw_bmb
+test_key_skip:
 	mov key_flag,0		;flag set, clear it and check scan code
 	cmp scan_code,esc_key	;esc key?
 	jne tk_up			;no, check arrow keys
@@ -249,7 +277,7 @@ tk_space:
 	cmp scan_code, spc_button		;space button?
 	jne test_timer					;no , check timer
 	cmp bomb_life,0					;is a bomb active?
-	jg tk_space_skip				;yes? skip
+	jge tk_space_skip				;yes? skip
 	call set_bomb
 tk_space_skip:
 	jmp test_timer				;go check timer	
@@ -277,8 +305,10 @@ delay:
 	call draw_bmb				;render bomb
 	jmp delay_skip				;done rendering
 burst_bomb:						;after explosion, dec bomb_life to -1
+	call bomb_blast
 	dec bomb_life				;decrease bomb_life (to make it -1)
 	call clear_bomb				;bomb is done, clear it.
+	call bomb_blast
 delay_skip:
 	
 	jmp test_key

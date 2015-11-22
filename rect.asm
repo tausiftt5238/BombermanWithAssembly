@@ -5,10 +5,13 @@ extern temp_x:word,temp_y:word
 extern bombr:byte
 extern map:byte
 extern bmb:byte
+extern fire:byte
+extern fire_x:word, fire_y:word
 public draw_rect,clear_tile
 public draw_box,draw_enemy,draw_bomber,draw_unbreak,draw_pixel
 public move_bomber
 public draw_bmb
+public draw_explode
 
 include mac
 
@@ -184,6 +187,22 @@ draw_bmb proc
 	load_reg
 	ret
 draw_bmb endp
+
+draw_explode proc
+	save_reg
+	
+	mov bx,fire_x
+	mov cx,fire_y
+	
+	call set_sprite_perimeter
+	
+	lea si,fire
+	
+	call draw_sprite
+	
+	load_reg
+	ret
+draw_explode endp
 
 ;Draws gray unbreakable boxes
 draw_unbreak proc
