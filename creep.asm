@@ -51,8 +51,8 @@ update_creep proc
 creep_loop:
 	mov c_index,cx
 	call move_creep
-	inc cx
-	cmp cx,3
+	add cx,2
+	cmp cx,6
 	jne creep_loop
 	
 	load_reg
