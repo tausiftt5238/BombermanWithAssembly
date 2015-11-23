@@ -237,20 +237,24 @@ main proc
 	call draw_bomber
 	call drawMap
 	
+;keyboard press test starts here
+	
 test_key:
 	cmp key_flag,1		;check key flag
 	jne test_timer		;not set, go ceck timer flag
 	mov bx,b_tx
 	mov cx,b_ty
-	call clear_tile
+	call clear_tile		;if key is pressed, clear bomberman from current position
 	cmp bomb_life,0
 	jle test_key_skip
-	call draw_bmb
+	call draw_bmb		;draw bomb if bomb_life > 0
 test_key_skip:
 	mov key_flag,0		;flag set, clear it and check scan code
 	cmp scan_code,esc_key	;esc key?
 	jne tk_up			;no, check arrow keys
 	jmp done			;esc, terminate
+
+;direction checking starts here
 	
 tk_up:
 	cmp scan_code, up_arrow		;up arrow?
@@ -291,24 +295,23 @@ tk_space:
 	jge tk_space_skip				;yes? skip
 	call set_bomb
 tk_space_skip:
-	jmp test_timer				;go check timer	
 	
-;check timer flag
 test_timer:
-	;cmp timer_flag,1 			;flag set?
-	;jne test_key				;no, check key flag
-	;mov timer_flag,0			;yes,clear it
-	
+	;it's name test_timer, but doesn't do that :v it was when we had actual test timer here :p
 	push cx
 	mov cx,9
 delay:
 	cmp timer_flag,1			;timer ticked?
 	jne delay					;no, keep checking
 	mov timer_flag,0
+	;bomberman keeps getting rendered here
 	call draw_bomber			
 	
 	loop delay					;delay it for 500ms
 	pop cx
+	
+	;rendering other stuff (creep, bomb, explosion) starts here
+	
 	call update_creep
 	cmp bomb_life,0				;check if explosion is to happen
 	je burst_bomb				;yes? explosion!!!
@@ -324,8 +327,7 @@ burst_bomb:						;after explosion, dec bomb_life to -1
 delay_skip:
 	
 	jmp test_key
-		
-		
+			
 	;reset timer interrupt vector
 done:
 	lea di,new_timer_vec
