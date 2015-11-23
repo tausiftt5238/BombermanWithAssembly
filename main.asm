@@ -11,6 +11,10 @@ public temp_x,temp_y					;for rect.asm
 public bomb_life, bomb_x, bomb_y		;for bomb.asm
 public fire								;for rect.asm
 public fire_x, fire_y					;for rect.asm
+public c_tx,c_ty,c_alive				;for creep.asm
+public c_dir,c_index,c_count			;for creep.asm
+public rand								;for creep.asm
+
 
 extern draw_rect:near				   	;from rect.asm
 extern drawMap:near					   	;from drawMap.asm
@@ -25,6 +29,7 @@ extern set_bomb:near					;from bomb.asm
 extern clear_bomb:near					;from bomb.asm
 extern draw_bmb:near					;from rect.asm
 extern bomb_blast:near					;from bomb.asm
+extern update_creep:near				;from creep.asm
 
 include mac
 
@@ -55,8 +60,14 @@ b_tx dw 0
 b_ty dw 0
 
 ;parameters for creep
-c_tx dw 0
-c_ty dw 0
+c_tx dw 7,18,16
+c_ty dw 9,1,11
+c_alive dw 3 dup (1)
+c_index dw 0
+c_dir dw 0
+c_count dw 3
+
+rand dw 1
 
 ;parameters for drawing sprite
 s_x1 dw 0
@@ -298,6 +309,7 @@ delay:
 	
 	loop delay					;delay it for 500ms
 	pop cx
+	call update_creep
 	cmp bomb_life,0				;check if explosion is to happen
 	je burst_bomb				;yes? explosion!!!
 	jl delay_skip				; < 0 ? skip
