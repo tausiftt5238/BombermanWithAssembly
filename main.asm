@@ -14,7 +14,7 @@ public fire_x, fire_y					;for rect.asm
 public c_tx,c_ty,c_alive				;for creep.asm
 public c_dir,c_index,c_count			;for creep.asm
 public rand								;for creep.asm
-
+public life								;for creep.asm, bomb.asm
 
 extern draw_rect:near				   	;from rect.asm
 extern drawMap:near					   	;from drawMap.asm
@@ -58,6 +58,7 @@ rect_y2 dw ?
 ;parameters for bomberman
 b_tx dw 0
 b_ty dw 0
+life dw 1
 
 ;parameters for creep
 c_tx dw 7,18,16
@@ -313,6 +314,8 @@ delay:
 	;rendering other stuff (creep, bomb, explosion) starts here
 	
 	call update_creep
+	cmp life,1					;check if life is less than 1, you might wanna move this check later on to accomodate the check for bombs as well
+	jl done						;checked for <1 coz for some reason the check doesn't activate for <=0. duibar collide korar por kaj hoi.
 	cmp bomb_life,0				;check if explosion is to happen
 	je burst_bomb				;yes? explosion!!!
 	jl delay_skip				; < 0 ? skip
