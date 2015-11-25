@@ -75,7 +75,7 @@ creep_bomber proc
 	mov ax,b_ty
 	cmp ax,c_ty[di]
 	jne creep_bomber_miss
-	dec life
+	mov life,0
 creep_bomber_miss:
 	load_reg
 	ret

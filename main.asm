@@ -300,7 +300,7 @@ tk_space_skip:
 test_timer:
 	;it's name test_timer, but doesn't do that :v it was when we had actual test timer here :p
 	push cx
-	mov cx,9
+	mov cx,5
 delay:
 	cmp timer_flag,1			;timer ticked?
 	jne delay					;no, keep checking
