@@ -47,14 +47,19 @@ rng endp
 ;c_dir: 0=up,1=right,2=down,3=left
 update_creep proc
 	save_reg
-	xor cx,cx
+	xor di,di
 	
 creep_loop:
-	mov c_index,cx
+	mov c_index,di
+	
+	cmp c_alive[di],0
+	je creep_skip_update
 	call move_creep
 	call creep_bomber
-	add cx,2
-	cmp cx,6
+creep_skip_update:
+
+	add di,2
+	cmp di,6
 	jne creep_loop
 	
 	load_reg
@@ -64,7 +69,6 @@ update_creep endp
 ;checks if creep and bomber collide, creep indexed by c_index
 creep_bomber proc
 	save_reg
-	mov di,c_index
 	mov ax,b_tx
 	cmp ax,c_tx[di]
 	jne creep_bomber_miss
@@ -80,9 +84,6 @@ creep_bomber endp
 move_creep proc
 	save_reg
 	
-	mov di,c_index
-	cmp c_alive[di],0
-	je move_creep_done
 	call rng
 	
 	cmp c_dir,1

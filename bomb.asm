@@ -8,6 +8,7 @@ extern draw_explode:near
 extern temp_x:word, temp_y:word
 extern life:word
 extern c_tx:word,c_ty:word,c_alive:word,c_index:word
+extern c_count:word
 
 public set_bomb
 public clear_bomb
@@ -243,6 +244,9 @@ kill_creep_loop:
 	cmp c_ty[si],ax
 	jne kill_creep_loop_skip
 	mov c_alive[si],0
+	mov c_tx[si],0
+	mov c_ty[si],0
+	dec c_count
 kill_creep_loop_skip:
 	add c_index,2
 	loop kill_creep_loop
