@@ -5,6 +5,7 @@ extern temp_x:word,temp_y:word
 extern map:byte
 extern rand:word
 extern draw_creep:near
+extern life:word,b_tx:word,b_ty:word
 public update_creep
 
 include mac
@@ -51,6 +52,7 @@ update_creep proc
 creep_loop:
 	mov c_index,cx
 	call move_creep
+	call creep_bomber
 	add cx,2
 	cmp cx,6
 	jne creep_loop
@@ -59,6 +61,21 @@ creep_loop:
 	ret
 update_creep endp
 
+;checks if creep and bomber collide, creep indexed by c_index
+creep_bomber proc
+	save_reg
+	mov di,c_index
+	mov ax,b_tx
+	cmp ax,c_tx[di]
+	jne creep_bomber_miss
+	mov ax,b_ty
+	cmp ax,c_ty[di]
+	jne creep_bomber_miss
+	dec life
+creep_bomber_miss:
+	load_reg
+	ret
+creep_bomber endp
 
 move_creep proc
 	save_reg
