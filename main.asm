@@ -63,7 +63,7 @@ life dw 1
 ;parameters for creep
 c_tx dw 7,18,16
 c_ty dw 9,1,11
-c_alive dw 3 dup (1)
+c_alive dw 1,1,1
 c_index dw 0
 c_dir dw 0
 c_count dw 3

@@ -242,7 +242,7 @@ kill_creep_loop:
 	mov ax,fire_y
 	cmp c_ty[si],ax
 	jne kill_creep_loop_skip
-	mov c_alive,0
+	mov c_alive[si],0
 kill_creep_loop_skip:
 	add c_index,2
 	loop kill_creep_loop
