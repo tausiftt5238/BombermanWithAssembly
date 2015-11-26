@@ -1,4 +1,4 @@
-extern names:word,scores:word,l_index1:byte,l_index2:byte
+extern names:byte,scores:word,l_index1:byte,l_index2:byte
 
 public load_lead
 public store_lead
@@ -33,12 +33,13 @@ bsort_outer:
 bsort_inner:
 	shl si,1
 	shl di,1
-	mov al,scores[si]
-	cmp al,scores[di]
+	mov ax,scores[si]
+	cmp ax,scores[di]
 	jle bsort_skip
-	mov ah,scores[di]
-	mov scores[si],ah
-	mov scores[di],al			;swapping scores
+	push scores[si]
+	push scores[di]
+	pop scores[si]
+	pop scores[di]				;swapping scores
 	shr si,1
 	shr di,1
 	
