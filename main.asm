@@ -15,7 +15,8 @@ public c_tx,c_ty,c_alive				;for creep.asm
 public c_dir,c_index,c_count			;for creep.asm,bomb.asm
 public rand								;for creep.asm
 public life								;for creep.asm, bomb.asm
-public time_var								;for str.asm
+public time_var							;for str.asm
+public names,scores,l_index1,l_index2	;for lead.asm
 
 extern draw_rect:near				   	;from rect.asm
 extern drawMap:near					   	;from drawMap.asm
@@ -32,7 +33,8 @@ extern draw_bmb:near					;from rect.asm
 extern bomb_blast:near					;from bomb.asm
 extern update_creep:near				;from creep.asm
 extern set_cursor:near,print_string:near;from str.asm
-
+extern load_lead:near,store_lead:near	;from lead.asm
+extern bsort:near						;from lead.asm
 
 include mac
 
@@ -200,6 +202,12 @@ result db 10 dup ('$')
 
 ;time variables
 time dw 400
+
+;leaderboard variables
+names db 20 dup ('$')
+scores dw 5 dup (0)
+l_index1 db 0
+l_index2 db 0
 
 .code
 
