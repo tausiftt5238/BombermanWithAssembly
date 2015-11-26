@@ -27,7 +27,7 @@ set_bomb proc
 	pop bomb_x
 	push b_ty
 	pop bomb_y
-	mov bomb_life,4
+	mov bomb_life,5
 	
 	mov ax,20d
 	mul bomb_y

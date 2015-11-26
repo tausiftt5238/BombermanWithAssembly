@@ -16,10 +16,10 @@ load_reg macro
 	pop ax
 endm
 
-printw macro n
+printw macro n,string
+	local stacking,printing
 	save_reg
 	mov ax,n
-	local stacking,printing
 	mov bx,10d
 	xor cx,cx
 stacking:
@@ -30,10 +30,14 @@ stacking:
 	push dx
 	or ax,ax
 	jne stacking
+	
+	lea di,string
+	
 printing:
-	pop dx
-	mov ah,2h
-	int 21h
+	pop ax
+	mov [di],al
+	inc di
 	loop printing
+	mov [di],'$'
 	load_reg
 endm

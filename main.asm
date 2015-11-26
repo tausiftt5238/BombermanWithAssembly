@@ -15,6 +15,7 @@ public c_tx,c_ty,c_alive				;for creep.asm
 public c_dir,c_index,c_count			;for creep.asm,bomb.asm
 public rand								;for creep.asm
 public life								;for creep.asm, bomb.asm
+public time_var								;for str.asm
 
 extern draw_rect:near				   	;from rect.asm
 extern drawMap:near					   	;from drawMap.asm
@@ -30,6 +31,8 @@ extern clear_bomb:near					;from bomb.asm
 extern draw_bmb:near					;from rect.asm
 extern bomb_blast:near					;from bomb.asm
 extern update_creep:near				;from creep.asm
+extern set_cursor:near,print_string:near;from str.asm
+
 
 include mac
 
@@ -142,7 +145,9 @@ bombr	db 0,0,0,0,0,4,4,4,4,4,0,0,0,0,0
 		db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		
 bmb		db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-		db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+		db 0,0,0,0,0,0,0,0,0fh,0fh,0,0,0,0,0
+		db 0,0,0,0,0,0,0,0fh,0,0,0fh,0,0,0,0
+		db 0,0,0,0,0,0,0,0fh,0,0,0,0fh,0,0,0
 		db 0,0,0,0,0,5,5,5,5,5,0,0,0,0,0
 		db 0,0,0,0,5,5,5,5,5,5,5,0,0,0,0
 		db 0,0,0,5,5,5,5,5,5,5,5,5,0,0,0
@@ -153,8 +158,6 @@ bmb		db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		db 0,0,0,5,5,5,5,5,5,5,5,5,0,0,0
 		db 0,0,0,0,5,5,5,5,5,5,5,0,0,0,0
 		db 0,0,0,0,0,5,5,5,5,5,0,0,0,0,0
-		db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-		db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 		
 creep	db 0,0,0,0,0eh,0eh,2,2,2,2,2,2,0,0,0
@@ -189,6 +192,14 @@ fire 	db 4,4,4,0eh,4,0eh,0eh,0eh,0eh,4,0eh,4,0eh,0eh,4
 		db 4,0eh,4,4,4,4,4,0eh,4,4,4,0eh,4,4,4
 		db 0eh,0eh,4,4,4,0eh,0eh,0eh,0eh,4,4,0eh,4,0eh,4
 
+
+;messages to be printed
+;msg1 db 'Hello$'
+time_var db 'time: $'
+result db 10 dup ('$')
+
+;time variables
+time dw 400
 
 .code
 
@@ -233,6 +244,15 @@ main proc
 	lea si, new_key_vec
 	call setup_int
 	
+	mov dh,25	
+	mov dl,20
+	call set_cursor
+	
+	lea si,time_var
+	mov bl,0c3h
+	call print_string
+	printw time,result				;reduces possible redundancy
+	
 	mov b_tx,1
 	mov b_ty,2
 	call draw_bomber
@@ -241,6 +261,8 @@ main proc
 ;keyboard press test starts here
 	
 test_key:
+	cmp time,0
+	je	done
 	cmp key_flag,1		;check key flag
 	jne test_timer		;not set, go ceck timer flag
 	mov bx,b_tx
@@ -284,7 +306,7 @@ tk_left:
 tk_right:
 	cmp scan_code, right_arrow		;right arrow?
 	jne tk_space					;no , check space bar
-	mov bx,0
+	mov bx,0	
 	mov si,1
 	call move_bomber
 	jmp test_timer				;go check timer
@@ -332,9 +354,27 @@ burst_bomb:						;after explosion, dec bomb_life to -1
 	cmp life,0
 	jle done
 delay_skip:
+
+	mov dh,25
+	mov dl,27
+	call set_cursor
+
+	lea si,result
+	mov bl,0
+	call print_string			;remove previously written time by printing over with black
+	
+	dec time
+	mov dh,25
+	mov dl,27
+	call set_cursor
+
+	printw time,result
+	lea si,result
+	mov bl,0c3h
+	call print_string			;print current time
 	
 	jmp test_key
-			
+	
 	;reset timer interrupt vector
 done:
 	lea di,new_timer_vec
