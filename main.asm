@@ -17,6 +17,8 @@ public rand								;for creep.asm
 public life								;for creep.asm, bomb.asm
 public time_var							;for str.asm
 public names,scores,l_index1,l_index2	;for lead.asm
+public htp1,htp2,htp3,htp4,htp5
+public htp6,htp7,htp8,htp9				;for str.asm
 
 extern draw_rect:near				   	;from rect.asm
 extern drawMap:near					   	;from drawMap.asm
@@ -35,6 +37,7 @@ extern update_creep:near				;from creep.asm
 extern set_cursor:near,print_string:near;from str.asm
 extern load_lead:near,store_lead:near	;from lead.asm
 extern bsort:near						;from lead.asm
+extern print_htp:near					;from str.asm
 
 include mac
 
@@ -195,6 +198,15 @@ fire 	db 4,4,4,0eh,4,0eh,0eh,0eh,0eh,4,0eh,4,0eh,0eh,4
 		db 4,0eh,4,4,4,4,4,0eh,4,4,4,0eh,4,4,4
 		db 0eh,0eh,4,4,4,0eh,0eh,0eh,0eh,4,4,0eh,4,0eh,4
 
+htp1 	db '                       HOW   TO   PLAY$'
+htp2	db '1) Kill the creeps within the limited time to win.$'
+htp3	db '2) Move Bomberman with the arrow keys.$'
+htp4	db '3) Set a bomb with the space bar. Bombs will explode after a certain amount of     time.$'
+htp5	db '4) Clear a path for yourself by destroying the red boxes with your bombs.$'
+htp6	db '                         Warnings$'
+htp7	db '1) Bombs are lethal to most creatures and should be used with caution.$'
+htp8	db '2) Creeps are so strong that they touch Bomberman and he dies.$'
+htp9	db '3) Gray boxes are the strongest in this universe and cannot be destroyed by       anything. Avoid picking a fight with gray boxes.$'
 
 ;messages to be printed
 
@@ -282,7 +294,7 @@ menu proc
 	mov bh,0
 	call set_cursor
 	
-	lea si,leaderboard_str
+	lea si,instruction_str
 	mov bl,5h
 	call print_string
 	
@@ -545,6 +557,11 @@ main_call_leaderboard:
 	
 main_call_instruction:
 	call reset_display
+	
+	call print_htp
+	
+	mov ah,1h
+	int 21h
 	
 	jmp main_main_menu
 
