@@ -533,6 +533,11 @@ done:
 	call setup_int
 	
 	call reset_display
+	
+;this is where the game ends, show leaderboard here
+	
+	jmp main_exit
+
 main_call_leaderboard:
 	call reset_display
 	
