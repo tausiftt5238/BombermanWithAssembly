@@ -25,6 +25,7 @@ set_cursor endp
 print_string proc
 	save_reg
 	;input si = offset of msg
+	;bl = color
 	mov al,[si]
 print_string_loop:
 	mov ah,9h

@@ -92,6 +92,7 @@ left_arrow = 4Bh
 right_arrow = 4Dh
 spc_button = 39h
 esc_key	= 1
+enter_key = 1ch
 
 ;bomb variables
 bomb_life db -1
@@ -196,8 +197,14 @@ fire 	db 4,4,4,0eh,4,0eh,0eh,0eh,0eh,4,0eh,4,0eh,0eh,4
 
 
 ;messages to be printed
-;msg1 db 'Hello$'
+
 time_var db 'time: $'
+bomberman_str db 'BOMBERMAN$$'
+new_game_str	db 'new game$'
+leaderboard_str	db 'leaderboard$'
+instruction_str	db 'instructions$'
+exit_str db 'exit$'
+credit_str db 'Made By: Sayontan & Tausif$'
 result db 10 dup ('$')
 
 ;time variables
@@ -208,6 +215,9 @@ names db 20 dup ('$')
 scores dw 5 dup (0)
 l_index1 db 0
 l_index2 db 0
+
+;selection of main menu
+selection db 0
 
 .code
 
@@ -229,10 +239,136 @@ reset_display proc
 	ret
 reset_display endp
 
+;main menu
+menu proc
+	save_reg
+	;clear screen
+	
+	call reset_display
+	
+	;show title of the game
+	mov dh,5
+	mov dl,30
+	mov bh,0
+	call set_cursor
+	
+	lea si,bomberman_str
+	mov bl,5h
+	call print_string
+	
+	;show new game
+	mov dh,10
+	mov dl,30
+	mov bh,0
+	call set_cursor
+	
+	lea si,new_game_str
+	mov bl,5h
+	call print_string
+	
+	;show leader board
+	mov dh,12
+	mov dl,30
+	mov bh,0
+	call set_cursor
+	
+	lea si,leaderboard_str
+	mov bl,5h
+	call print_string
+	
+	;show instruction 
+	mov dh,14
+	mov dl,30
+	mov bh,0
+	call set_cursor
+	
+	lea si,leaderboard_str
+	mov bl,5h
+	call print_string
+	
+	;show exit
+	mov dh,16
+	mov dl,30
+	mov bh,0
+	call set_cursor
+	
+	lea si,exit_str
+	mov bl,5h
+	call print_string
+	
+	;credits
+	mov dh,24
+	mov dl,24
+	mov bh,0
+	call set_cursor
+	
+	lea si,credit_str
+	mov bl,5h
+	call print_string
+	
+	
+	load_reg
+	ret
+menu endp
+
+;selection in menu
+
+select_menu proc
+	save_reg
+	mov dh,10
+	mov dl,29
+	mov bh, 0
+	
+	
+select_menu_loop:
+	call set_cursor
+	mov ah,00h
+	int 16h
+	;ah holds the scan-code
+	cmp ah,up_arrow
+	;10 is upper limit , 16 is lower limit
+	je select_menu_up
+	cmp ah,down_arrow
+	je select_menu_down
+	cmp ah,enter_key
+	je select_menu_enter
+	jmp select_menu_skip
+select_menu_enter:
+	mov selection,dh
+	jmp select_menu_loop_done
+select_menu_up:
+	cmp dh,10
+	je select_menu_up_skip
+	sub dh,2
+select_menu_up_skip:
+	jmp select_menu_skip
+select_menu_down:
+	cmp dh,16
+	je select_menu_down_skip
+	add dh,2
+select_menu_down_skip:
+	
+select_menu_skip:
+	jmp select_menu_loop
+select_menu_loop_done:
+		
+	load_reg
+	ret
+select_menu endp
 
 main proc
 	mov ax,@data
 	mov ds,ax
+
+main_main_menu:
+	call menu
+	call select_menu
+	cmp selection,12
+	je main_call_leaderboard
+	cmp selection,14
+	je main_call_instruction
+	cmp selection,16
+	je main_exit
 	
 	call setup_display
 	
@@ -257,7 +393,7 @@ main proc
 	call set_cursor
 	
 	lea si,time_var
-	mov bl,0c3h
+	mov bl,3h						;color
 	call print_string
 	printw time,result				;reduces possible redundancy
 	
@@ -396,6 +532,18 @@ done:
 	mov al,9h
 	call setup_int
 	
+	call reset_display
+main_call_leaderboard:
+	call reset_display
+	
+	jmp main_main_menu
+	
+main_call_instruction:
+	call reset_display
+	
+	jmp main_main_menu
+
+main_exit:
 	call reset_display
 	
 	mov ah,4ch
