@@ -371,6 +371,53 @@ select_menu_loop_done:
 	ret
 select_menu endp
 
+show_leaderboard proc
+	save_reg
+	call load_lead
+	;show leaderboard
+	mov dh,5
+	mov dl,30
+	mov bh,0
+	call set_cursor
+	
+	lea si,leaderboard_str
+	mov bl,1h
+	call print_string
+	
+	mov di,0
+	mov no_of_input,0
+	mov dh,10
+	
+show_leaderboard_loop:	
+	;show names
+	
+	mov dl,28
+	mov bh,0
+	call set_cursor
+	
+	lea si,names[di]
+	mov bl,1h
+	call print_string
+	
+	;show scores
+	mov dl,40
+	mov bh,0
+	call set_cursor
+	
+	lea si,scores[di]
+	mov bl,1h
+	call print_string
+	
+	add dh,2
+	add di,4
+	inc no_of_input
+	cmp no_of_input,3
+	jl show_leaderboard_loop
+	
+	load_reg
+	ret
+show_leaderboard endp
+
 main proc
 	mov ax,@data
 	mov ds,ax
@@ -555,7 +602,9 @@ done:
 
 main_call_leaderboard:
 	call reset_display
-	
+	call show_leaderboard
+	mov ah,1h
+	int 21h
 	jmp main_main_menu
 	
 main_call_instruction:
