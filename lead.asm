@@ -1,5 +1,5 @@
-extern names:byte,scores:word,l_index1:byte,l_index2:byte
-
+extern names:byte,scores:byte,l_index1:byte,l_index2:byte
+extern fnameb:byte,no_of_input:byte
 public load_lead
 public store_lead
 public bsort
@@ -10,12 +10,75 @@ include mac
 load_lead proc
 	save_reg
 	
+	;load file handler
+	lea dx,fnameb
+	mov ah,3dh
+	mov al,0
+	int 21h
+	
+	;store file hander in bx
+	mov bx,ax
+	mov no_of_input,0
+	
+	mov si,0
+load_lead_loop:	
+	lea dx,names[si]
+	mov ah,3fh
+	mov cx,4
+	int 21h
+	
+	lea dx,scores[si]
+	mov ah,3fh
+	mov cx,4
+	int 21h
+	
+	add si,4
+	inc no_of_input
+	
+	cmp no_of_input,4
+	jl load_lead_loop
+	
+	;close file
+	mov ah,3eh
+	int 21h	
+	
 	load_reg
 	ret
-load_lead endp
+load_lead endp 
 
 store_lead proc
 	save_reg
+	;load file handler
+	lea dx,fnameb
+	mov ah,3dh
+	mov al,1
+	int 21h
+	
+	;store file hander in bx
+	mov bx,ax
+	mov no_of_input,0
+	
+	mov si,0
+store_lead_loop:	
+	lea dx,names[si]
+	mov ah,40h
+	mov cx,4
+	int 21h
+	
+	lea dx,scores[si]
+	mov ah,40h
+	mov cx,4
+	int 21h
+	
+	add si,4
+	inc no_of_input
+	
+	cmp no_of_input,4
+	jl store_lead_loop
+	
+	;close file
+	mov ah,3eh
+	int 21h	
 	
 	load_reg
 	ret
@@ -33,13 +96,13 @@ bsort_outer:
 bsort_inner:
 	shl si,1
 	shl di,1
-	mov ax,scores[si]
-	cmp ax,scores[di]
+	;mov ax,scores[si]
+	;cmp ax,scores[di]
 	jle bsort_skip
-	push scores[si]
-	push scores[di]
-	pop scores[si]
-	pop scores[di]				;swapping scores
+	;push scores[si]
+	;push scores[di]
+	;pop scores[si]
+	;pop scores[di]				;swapping scores
 	shr si,1
 	shr di,1
 	

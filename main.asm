@@ -19,6 +19,7 @@ public time_var							;for str.asm
 public names,scores,l_index1,l_index2	;for lead.asm
 public htp1,htp2,htp3,htp4,htp5
 public htp6,htp7,htp8,htp9				;for str.asm
+public no_of_input,fnameb						;for lead.asm
 
 extern draw_rect:near				   	;from rect.asm
 extern drawMap:near					   	;from drawMap.asm
@@ -223,8 +224,10 @@ result db 10 dup ('$')
 time dw 400
 
 ;leaderboard variables
-names db 20 dup ('$')
-scores dw 5 dup (0)
+names db 20 dup('$')
+scores db 20 dup('$')
+no_of_input db 0
+fnameb db 'leader',0
 l_index1 db 0
 l_index2 db 0
 
