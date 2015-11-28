@@ -463,9 +463,11 @@ score_comp:
 	mov al,result[di]
 	cmp al,scores[si]
 	jl score_take_skip
+	jg score_comp_done
 	inc si
 	inc di
 	loop score_comp
+score_comp_done:
 	
 	mov dh,15
 	mov dl,30
