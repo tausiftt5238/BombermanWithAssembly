@@ -106,7 +106,9 @@ bsort_inner:
 bsort_comp:
     mov al,scores[di]
     cmp al,scores[si]
-	jle bsort_skip
+	jl bsort_skip
+	inc si
+	inc di
 	loop bsort_comp
 	
 	mov si,dx

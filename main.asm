@@ -216,7 +216,9 @@ bomberman_str db 'BOMBERMAN$$'
 new_game_str	db 'new game$'
 leaderboard_str	db 'leaderboard$'
 instruction_str	db 'instructions$'
-bomberman_dead_str db 'BOMBERMAN IS DEAD$'
+bomberman_dead_str 	db 'BOMBERMAN IS DEAD$'
+bomberman_win_str 	db 'VICTORY ACHEIVED$'
+enter_name_str 		db 'Enter your name:$'
 exit_str db 'exit$'
 credit_str db 'Made By: Sayontan & Tausif$'
 result db 10 dup ('$')
@@ -374,7 +376,6 @@ select_menu endp
 
 show_leaderboard proc
 	save_reg
-	call load_lead
 	;show leaderboard
 	mov dh,5
 	mov dl,30
@@ -417,6 +418,8 @@ show_leaderboard_loop:
 	cmp no_of_input,3
 	jl show_leaderboard_loop
 	
+	call store_lead
+	
 	load_reg
 	ret
 show_leaderboard endp
@@ -439,10 +442,82 @@ bomberman_dead proc
 	ret
 bomberman_dead endp
 
+win_screen proc
+	save_reg
+	mov dh, 10
+	mov dl, 30
+	mov bh, 0
+	call set_cursor
+	
+	lea si,bomberman_win_str
+	mov bl, 2
+	call print_string
+	
+	add time,100d
+	printw time,result
+	mov si,8
+	mov di,0
+	mov cx,3
+	;check if current score is worth taking
+score_comp:
+	mov al,result[di]
+	cmp al,scores[si]
+	jl score_take_skip
+	inc si
+	inc di
+	loop score_comp
+	
+	mov dh,15
+	mov dl,30
+	mov bh,0
+	call set_cursor
+	
+	lea si,enter_name_str
+	mov bl,3
+	call print_string
+	
+	mov names[9],'$'
+	mov names[10],'$'
+	
+	mov dh,17
+	mov dl,34
+	mov cx,3
+	mov di,8
+take_name_loop:
+	inc dl
+	call set_cursor
+	mov ah,0
+	int 16h
+	mov names[di],al
+	lea si,names[di]
+	mov bl,3
+	call print_string
+	inc di
+	loop take_name_loop
+	
+	mov si,8
+	mov di,0
+	mov cx,3
+switch_score_loop:
+	mov al,result[di]
+	mov scores[si],al
+	inc si
+	inc di
+	loop switch_score_loop
+	
+score_take_skip:
+	mov ah,1h
+	int 21h
+	
+	load_reg
+	ret
+win_screen endp
+
 main proc
 	mov ax,@data
 	mov ds,ax
 
+	call load_lead
 main_main_menu:
 	call menu
 	call select_menu
@@ -624,7 +699,7 @@ done:
 	jle main_bomberman_dead
 	
 ;add victory condition here
-	jmp main_exit
+	jmp main_victory
 
 main_call_leaderboard:
 	call reset_display
@@ -643,8 +718,17 @@ main_call_instruction:
 	
 	jmp main_main_menu
 ;call victory screen here.
+main_victory:
+	call win_screen
+	jmp main_post_game
+	
 main_bomberman_dead:
 	call bomberman_dead
+main_post_game:
+	call reset_display
+	call show_leaderboard
+	mov ah,1h
+	int 21h
 main_exit:
 	call reset_display
 	
