@@ -87,50 +87,52 @@ store_lead endp
 bsort proc
 	save_reg
 	
-	mov si,-1
+	mov bx,-1
 bsort_outer:
-	inc si
-	cmp si,5
-	jmp bsort_done
-	mov di,4
+	inc bx
+	cmp bx,3
+	je bsort_done
+	xor dx,dx
 bsort_inner:
-	shl si,1
-	shl di,1
-	;mov ax,scores[si]
-	;cmp ax,scores[di]
-	jle bsort_skip
-	;push scores[si]
-	;push scores[di]
-	;pop scores[si]
-	;pop scores[di]				;swapping scores
-	shr si,1
-	shr di,1
 	
-	push si
-	push di
-	mov ax,si
-	mov bl,4
-	mul bl
-	mov ax,si
-	mov ax,di
-	mov bl,4
-	mul bl
-	mov ax,di
+	mov si,dx
+	mov di,dx
+	inc di
+	mov cl,2
+	shl si,cl
+	shl di,cl
+	
+	mov cx,3 
+bsort_comp:
+    mov al,scores[di]
+    cmp al,scores[si]
+	jle bsort_skip
+	loop bsort_comp
+	
+	mov si,dx
+	mov di,dx
+	inc di
+	mov cl,2
+	shl si,cl
+	shl di,cl
 	mov cx,3
 bsort_nameswap:
 	mov al,names[si]
 	mov ah,names[di]
 	mov names[si],ah
 	mov names[di],al
+	mov al,scores[si]
+	mov ah,scores[di]
+	mov scores[si],ah
+	mov scores[di],al
 	inc si
 	inc di
 	loop bsort_nameswap			;swapping names
-	pop di
-	pop si
+	
 	
 bsort_skip:
-	dec di
-	cmp di,-1
+	inc dx
+	cmp dx,2
 	jne bsort_inner
 	
 	jmp bsort_outer
@@ -139,5 +141,4 @@ bsort_done:
 	load_reg
 	ret
 bsort endp
-
 end
