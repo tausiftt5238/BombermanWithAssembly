@@ -216,6 +216,7 @@ bomberman_str db 'BOMBERMAN$$'
 new_game_str	db 'new game$'
 leaderboard_str	db 'leaderboard$'
 instruction_str	db 'instructions$'
+bomberman_dead_str db 'BOMBERMAN IS DEAD$'
 exit_str db 'exit$'
 credit_str db 'Made By: Sayontan & Tausif$'
 result db 10 dup ('$')
@@ -420,6 +421,24 @@ show_leaderboard_loop:
 	ret
 show_leaderboard endp
 
+bomberman_dead proc
+	save_reg
+	mov dh, 10
+	mov dl, 30
+	mov bh, 0
+	call set_cursor
+	
+	lea si,bomberman_dead_str
+	mov bl, 4
+	call print_string
+	
+	mov ah,1h
+	int 21h
+	
+	load_reg
+	ret
+bomberman_dead endp
+
 main proc
 	mov ax,@data
 	mov ds,ax
@@ -599,7 +618,12 @@ done:
 	call reset_display
 	
 ;this is where the game ends, show leaderboard here
+;all sort of winning/losing screen goes after this
+;as we are back to text mode with the interrupts in their previous form
+	cmp life,0
+	jle main_bomberman_dead
 	
+;add victory condition here
 	jmp main_exit
 
 main_call_leaderboard:
@@ -618,7 +642,9 @@ main_call_instruction:
 	int 21h
 	
 	jmp main_main_menu
-
+;call victory screen here.
+main_bomberman_dead:
+	call bomberman_dead
 main_exit:
 	call reset_display
 	
