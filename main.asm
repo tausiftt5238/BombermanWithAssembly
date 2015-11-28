@@ -384,6 +384,8 @@ show_leaderboard proc
 	mov bl,1h
 	call print_string
 	
+	call bsort
+	
 	mov di,0
 	mov no_of_input,0
 	mov dh,10
